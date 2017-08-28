@@ -4,15 +4,8 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour {
 
-    //Reference for enemy physics
-    private Rigidbody rb;
-
-    //References to Player, EnemySpawner, and PlayerController
     public Transform playerPos;
-    public PlayerController playerController;
-    public EnemySpawner spawner;
-
-
+    
     //Enemy Properties
     public float moveSpeed;
     public int pushBack;
@@ -20,10 +13,17 @@ public class EnemyMovement : MonoBehaviour {
     public int value;
     public int type;
 
+    //Reference for enemy physics
+    private Rigidbody rb;
+
+    //References to Player, and PlayerController
+    private PlayerController playerController;
+ 
+
+
     //Gets References
     void Start()
     {
-        spawner = GameObject.FindGameObjectWithTag("GameController").GetComponent<EnemySpawner>();
         playerPos = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         rb = gameObject.GetComponent<Rigidbody>();
@@ -33,7 +33,6 @@ public class EnemyMovement : MonoBehaviour {
     void Update ()
     {
         transform.LookAt(playerPos);
-        //this.transform.Translate(0, 0, moveSpeed / 100);
         transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed / 10);
     }
 

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class GameOver : MonoBehaviour {
 
     public GUIText hiScore;
+
     private int numZeros;
 
     void Start()

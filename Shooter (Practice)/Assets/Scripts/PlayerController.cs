@@ -5,31 +5,26 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
-    private bool jump = true;
-    public int maxAmmo = 50;
-
     //Player Properties
     public int moveSpeed;
     public int turnSpeed;
     public int jumpStrength;
     public int health;
     public int ammo;
+    public int maxAmmo = 50;
+
     public float untouchable;
     public float reloadTime;
 
-  
-
-    public bool canHit = true;
-    public bool canFire = true;
-
-    public GUIText healthText;
-    public GUIText ammoText;
-    public GUIText eventText;
-
-    //Reference to Player physics, Game Controller, gun, and projectile
     public GameObject bullet;
     public Transform launcher;
-    public Rigidbody rb;
+
+    [HideInInspector]
+    public bool canFire = true, canHit = true;
+    private bool jump = true;
+
+    //Reference to Player physics, and Game Controller
+    private Rigidbody rb;
     private GameController gc;
 
 
@@ -40,7 +35,6 @@ public class PlayerController : MonoBehaviour {
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         UpdateHealth();
         UpdateAmmo();
-        eventText.text = "";
     }
 
     //Moving and Shooting
@@ -112,19 +106,19 @@ public class PlayerController : MonoBehaviour {
     //Reloads Gun
     IEnumerator Reload()
     {
-        eventText.text = "Reloading...";
+        gc.eventText.text = "Reloading...";
         canFire = false;
         yield return new WaitForSeconds(reloadTime);
         ammo = maxAmmo;
         canFire = true;
-        eventText.text = "";
+        gc.eventText.text = "";
         UpdateAmmo();
     }
 
     //Keeps track of current weapon ammo
     void UpdateAmmo()
     {
-        ammoText.text = "Ammo: " + ammo;
+        gc.ammoText.text = "Ammo: " + ammo;
         if (ammo <= 0)
         {
             StartCoroutine(Reload());
@@ -134,7 +128,7 @@ public class PlayerController : MonoBehaviour {
     //Keeps track of current Health and Calls to Invincible Coroutine on Hit
     public void UpdateHealth()
     {
-        healthText.text = "Health: " + health;
+        gc.healthText.text = "Health: " + health;
         StartCoroutine(Invincible());
     }
 

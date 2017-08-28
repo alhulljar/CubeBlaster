@@ -7,7 +7,6 @@ public class OutOfBounds : MonoBehaviour
 
     private PlayerController player;
 
-
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();

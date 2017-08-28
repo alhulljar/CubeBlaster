@@ -7,13 +7,21 @@ public class GameController : MonoBehaviour {
 
     //Game Properties
     public GUIText scoreText;
+    public GUIText healthText;
+    public GUIText ammoText;
+    public GUIText eventText;
+
     public GameObject pauseMenu;
-    public PlayerController playerController;
-    public EnemySpawner enemySpawner;
+   
     public int score;
     public int pointValue;
+
+    [HideInInspector]
     public bool paused = false;
-    
+
+    private PlayerController playerController;
+    private EnemySpawner enemySpawner;
+
     //Coroutine begins countdown to game start
     IEnumerator CountDown()
     {
@@ -23,24 +31,23 @@ public class GameController : MonoBehaviour {
         playerController.enabled = false;
         for (int i = 0; i < 3; i++)
         {
-            playerController.eventText.text = count + "...";
+            eventText.text = count + "...";
             yield return new WaitForSeconds(1f);
             count--;
             
         }
-        playerController.eventText.text = "Start!";
+        eventText.text = "Start!";
         enemySpawner.FirstWave();
         enemySpawner.enabled = true;
         playerController.enabled = true;
         yield return new WaitForSeconds(1f);
-        playerController.eventText.text = "";
+        eventText.text = "";
     }
 
 
 	//Sets starting score to zero, gets references and starts Countdown corountine
 	void Start ()
     {
-
         score = 0;
         UpdateScore();
         pauseMenu.SetActive(false);
@@ -48,6 +55,7 @@ public class GameController : MonoBehaviour {
         playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         StartCoroutine(CountDown());
         StopCoroutine(CountDown());
+        eventText.text = "";
     }
 
     //Checks if game is paused 
