@@ -19,8 +19,6 @@ public class EnemyMovement : MonoBehaviour {
     //References to Player, and PlayerController
     private PlayerController playerController;
  
-
-
     //Gets References
     void Start()
     {

@@ -6,7 +6,7 @@ using UnityEngine;
 public class ChangeScene : MonoBehaviour
 {
 
-    public GameController gameController;
+    private GameController gameController;
 
     //Gets references
     void Start()

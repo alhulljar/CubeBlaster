@@ -17,11 +17,15 @@ public class PlayerController : MonoBehaviour {
     public float reloadTime;
 
     public GameObject bullet;
-    public Transform launcher;
+    public GameObject[] weapons;
+    public Transform[] shotSpawns;
 
     [HideInInspector]
     public bool canFire = true, canHit = true;
+
+    public int weaponNum = 0;
     private bool jump = true;
+    public bool akimbo = false;
 
     //Reference to Player physics, and Game Controller
     private Rigidbody rb;
@@ -59,13 +63,11 @@ public class PlayerController : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            if (canFire == true)
-            {                       
-                Instantiate(bullet, launcher.position, launcher.rotation);              
-                ammo--;
-                UpdateAmmo();
-            }
-               
+            Fire();
+        }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            WeaponSwitch();
         }
         //Checks if Player should be dead
         if (health <= 0)
@@ -137,6 +139,38 @@ public class PlayerController : MonoBehaviour {
     {
         gc.UpdateHiScore();
         SceneManager.LoadScene(2);
+    }
+
+    void WeaponSwitch()
+    {
+        if (weapons[1].activeInHierarchy)
+        {
+            weapons[1].SetActive(false);
+            akimbo = false;
+        }
+        else
+        {
+            weapons[1].SetActive(true);
+            akimbo = true;
+        }
+    }
+
+    void Fire()
+    {
+        if (canFire == true && akimbo == true)
+        {
+            Instantiate(bullet, shotSpawns[0].position, shotSpawns[0].rotation);
+            Instantiate(bullet, shotSpawns[1].position, shotSpawns[1].rotation);
+            ammo--;
+            UpdateAmmo();
+        }
+        else if (canFire == true)
+        {
+            Instantiate(bullet, shotSpawns[0].position, shotSpawns[0].rotation);
+            ammo--;
+            UpdateAmmo();
+        }
+        
     }
 
 }

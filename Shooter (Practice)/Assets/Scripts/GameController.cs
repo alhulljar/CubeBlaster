@@ -12,12 +12,13 @@ public class GameController : MonoBehaviour {
     public GUIText eventText;
 
     public GameObject pauseMenu;
-   
-    public int score;
+
     public int pointValue;
 
     [HideInInspector]
     public bool paused = false;
+
+    private int score;
 
     private PlayerController playerController;
     private EnemySpawner enemySpawner;
@@ -33,8 +34,7 @@ public class GameController : MonoBehaviour {
         {
             eventText.text = count + "...";
             yield return new WaitForSeconds(1f);
-            count--;
-            
+            count--;    
         }
         eventText.text = "Start!";
         enemySpawner.FirstWave();
@@ -55,7 +55,6 @@ public class GameController : MonoBehaviour {
         playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         StartCoroutine(CountDown());
         StopCoroutine(CountDown());
-        eventText.text = "";
     }
 
     //Checks if game is paused 
