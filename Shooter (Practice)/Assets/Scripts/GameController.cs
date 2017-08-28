@@ -108,6 +108,7 @@ public class GameController : MonoBehaviour {
         scoreText.text = "Score: " + score;
     }
 
+    //Updates Hi-Score
     public void UpdateHiScore()
     {
         if (score > PlayerPrefs.GetInt("HighScore"))

@@ -9,6 +9,7 @@ public class GameOver : MonoBehaviour {
 
     private int numZeros;
 
+    //Called when Player Health reaches 0 and displays HighScore
     void Start()
     {
         numZeros = 9 - PlayerPrefs.GetInt("HighScore", 0).ToString().Length;
@@ -19,6 +20,7 @@ public class GameOver : MonoBehaviour {
         hiScore.text = hiScore.text + PlayerPrefs.GetInt("HighScore", 0).ToString();
     }
 
+    //Waits for Key Press to Either Restart or Clear HighScore
     void Update ()
     {
         if (Input.GetKeyDown(KeyCode.R))

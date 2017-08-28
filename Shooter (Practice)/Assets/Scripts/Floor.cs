@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OutOfBounds : MonoBehaviour
-{
+public class Floor : MonoBehaviour {
 
     private PlayerController player;
 
@@ -12,16 +11,12 @@ public class OutOfBounds : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
     }
 
-    //If player or enemy falls off map kills them
+    //Enables Player jump again after touching floor
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            player.health = 0;
-        }
-        else if (other.gameObject.CompareTag("Enemy"))
-        {
-            Destroy(other.gameObject);
+            player.canJump = true;
         }
     }
 }

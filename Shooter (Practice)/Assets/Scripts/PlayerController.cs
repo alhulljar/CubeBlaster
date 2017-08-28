@@ -11,21 +11,20 @@ public class PlayerController : MonoBehaviour {
     public int jumpStrength;
     public int health;
     public int ammo;
-    public int maxAmmo = 50;
+    public int clipSize;
+    public int maxAmmo = 100;
+    public int weaponNum;
 
     public float untouchable;
     public float reloadTime;
 
+    //Weapons Properties
     public GameObject bullet;
     public GameObject[] weapons;
     public Transform[] shotSpawns;
 
     [HideInInspector]
-    public bool canFire = true, canHit = true;
-
-    public int weaponNum = 0;
-    private bool jump = true;
-    public bool akimbo = false;
+    public bool canFire = true, canHit = true, canJump = true, akimbo = false;
 
     //Reference to Player physics, and Game Controller
     private Rigidbody rb;
@@ -41,7 +40,7 @@ public class PlayerController : MonoBehaviour {
         UpdateAmmo();
     }
 
-    //Moving and Shooting
+    //Moving,Shooting, and Weapon Switching
     void Update ()
     {
         transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, 0f);
@@ -80,21 +79,12 @@ public class PlayerController : MonoBehaviour {
     void FixedUpdate()
     {
         
-        if (jump == true && Input.GetKeyDown(KeyCode.Space))
+        if (canJump == true && Input.GetKeyDown(KeyCode.Space))
         {
             rb.AddForce(transform.up * jumpStrength);
-            jump = false;
+            canJump = false;
         }
 
-    }
-
-    //Enables jump again after touching floor
-    void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.CompareTag("Floor"))
-        {
-            jump = true;
-        }
     }
 
     //After being hit makes enemies wait a number of seconds before hitting again
@@ -111,17 +101,43 @@ public class PlayerController : MonoBehaviour {
         gc.eventText.text = "Reloading...";
         canFire = false;
         yield return new WaitForSeconds(reloadTime);
-        ammo = maxAmmo;
+        //If Ammo for new Clip doesn't divide nicely checks to see if remaining ammo is greater or less than clipSize
+        if (maxAmmo % clipSize != 0)
+        {
+            if(maxAmmo >  clipSize)
+            {
+                ammo = clipSize;
+                maxAmmo -= clipSize;
+            }
+            else
+            {
+                ammo = maxAmmo;
+                maxAmmo = 0;
+            }
+        }
+        //Reloads as normal
+        else
+        {
+            ammo = clipSize;
+            maxAmmo -= clipSize;
+        }
         canFire = true;
         gc.eventText.text = "";
         UpdateAmmo();
     }
 
     //Keeps track of current weapon ammo
-    void UpdateAmmo()
+    public void UpdateAmmo()
     {
-        gc.ammoText.text = "Ammo: " + ammo;
-        if (ammo <= 0)
+        gc.ammoText.text = "Ammo: " + ammo + "/" + maxAmmo;
+        //If clip ammo and total ammo is 0 player can't fire until they find ammo
+        if (ammo <= 0 && maxAmmo == 0)
+        {
+            canFire = false;
+            return;
+        }
+        //Reloads as normals
+        else if (ammo <= 0)
         {
             StartCoroutine(Reload());
         }
@@ -141,26 +157,41 @@ public class PlayerController : MonoBehaviour {
         SceneManager.LoadScene(2);
     }
 
+    //Switches Between Player Weapons and Toggles Akimbo when necessary
     void WeaponSwitch()
     {
-        if (weapons[1].activeInHierarchy)
+        switch (weaponNum)
         {
-            weapons[1].SetActive(false);
-            akimbo = false;
-        }
-        else
-        {
-            weapons[1].SetActive(true);
-            akimbo = true;
+            case 0:
+                weapons[weapons.Length - 1].SetActive(false);
+                weapons[weaponNum].SetActive(true);
+                weaponNum++;
+                break;
+            case 1:
+                weapons[weaponNum].SetActive(true);
+                akimbo = true;
+                weaponNum++;
+                break;
+            case 2:
+                weapons[weaponNum - 1].SetActive(false);
+                weapons[weaponNum - 2].SetActive(false);
+                weapons[weaponNum].SetActive(true);
+                weaponNum = 0;
+                akimbo = false;
+                break;
+            default:
+                break;
         }
     }
 
+    //Fires gun and subtracts from clip ammo
     void Fire()
     {
         if (canFire == true && akimbo == true)
         {
             Instantiate(bullet, shotSpawns[0].position, shotSpawns[0].rotation);
             Instantiate(bullet, shotSpawns[1].position, shotSpawns[1].rotation);
+            ammo--;
             ammo--;
             UpdateAmmo();
         }
